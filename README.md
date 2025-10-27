@@ -32,6 +32,9 @@ Production-grade Python application for fine-tuning Qwen3-8B on code completion 
 
 # Run training
 !python scripts/train.py
+
+# Test fine-tuned model with sample prompts
+!python scripts/test.py
 ```
 
 ### Local Installation
@@ -47,11 +50,25 @@ pip install -r requirements.txt
 python scripts/train.py
 ```
 
-### Inference
+### Testing
+Test the fine-tuned model with predefined prompts:
 ```bash
+python scripts/test.py
+```
+
+### Custom Inference
+Run inference with custom prompts (automatically uses fine-tuned model if available):
+```bash
+# Uses fine-tuned model from outputs/final_model (or base model if not found)
 python scripts/infer.py \
   --prefix "def calculate_average(numbers):" \
   --suffix "return total / count" \
+  --language Python
+
+# Override with specific model path
+python scripts/infer.py \
+  --model-path path/to/custom/model \
+  --prefix "def process_data(items):" \
   --language Python
 ```
 
@@ -94,7 +111,8 @@ FIM_TRAIN_MAX_STEPS=10
 │   └── logger.py         # Centralized logging
 ├── scripts/              # CLI entry points
 │   ├── train.py          # Training script
-│   └── infer.py          # Inference script
+│   ├── test.py           # Test fine-tuned model
+│   └── infer.py          # Custom inference script
 ├── tests/                # Test suite
 ├── archive/              # Original implementation
 └── pyproject.toml        # Project metadata
