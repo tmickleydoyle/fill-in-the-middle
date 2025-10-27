@@ -4,7 +4,39 @@ Production-grade Python application for fine-tuning Qwen3-8B on code completion 
 
 ## Quick Start
 
-### Installation
+### Google Colab (Recommended)
+
+**Enable GPU:** Runtime → Change runtime type → T4 GPU
+
+```python
+# Clone repository
+!git clone https://github.com/tmickleydoyle/fill-in-the-middle.git
+%cd fill-in-the-middle
+
+# Verify GPU
+!nvidia-smi
+
+# Install dependencies (skip triton for Colab)
+!pip install -q setuptools wheel torch>=2.8.0 transformers==4.56.2 datasets>=2.14.0 \
+  trl==0.22.2 pydantic>=2.0.0 pydantic-settings>=2.0.0 bitsandbytes>=0.41.0 accelerate>=0.24.0
+
+# Install unsloth
+!pip install -q "unsloth[colab-new] @ git+https://github.com/unslothai/unsloth.git"
+
+# Create minimal test configuration
+!echo "FIM_TRAIN_MAX_STEPS=10" > .env
+!echo "FIM_TRAIN_LOGGING_STEPS=1" >> .env
+!echo "FIM_DATA_ENABLE_RESPONSE_MASKING=false" >> .env
+!echo "FIM_LOG_LEVEL=INFO" >> .env
+
+# Run training
+!python scripts/train.py
+```
+
+### Local Installation
+
+**Requirements:** NVIDIA/AMD/Intel GPU (Unsloth does not support Apple Silicon)
+
 ```bash
 pip install -r requirements.txt
 ```
@@ -24,13 +56,15 @@ python scripts/infer.py \
 
 ## Configuration
 
-Configure via environment variables or `.env` file:
+Configure via environment variables or `.env` file. See `.env.example` for all options.
 
+**Common Settings:**
 ```bash
 FIM_MODEL_NAME=unsloth/Qwen3-8B-bnb-4bit
 FIM_DATA_DATASET_NAME=sourcegraph/context-aware-fim-code-completions
 FIM_DATA_ENABLE_RESPONSE_MASKING=false
 FIM_TRAIN_NUM_TRAIN_EPOCHS=1
+FIM_TRAIN_MAX_STEPS=10  # For minimal testing (overrides num_train_epochs)
 FIM_TRAIN_LEARNING_RATE=1e-5
 FIM_LOG_LEVEL=INFO
 ```
@@ -57,7 +91,8 @@ FIM_LOG_LEVEL=INFO
 ## Requirements
 
 - Python 3.10+
-- CUDA-capable GPU (8GB+ VRAM)
+- GPU: NVIDIA/AMD/Intel with 8GB+ VRAM (Colab T4 GPU works)
+- **Note:** Unsloth does not support Apple Silicon (use Colab instead)
 - 16GB+ RAM
 
 ## Development

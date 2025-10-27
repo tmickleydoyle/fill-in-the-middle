@@ -69,7 +69,12 @@ class InferenceConfig(BaseSettings):
 
 
 class Config(BaseSettings):
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        env_prefix="FIM_",
+        extra="ignore",
+    )
 
     log_level: Literal["DEBUG", "INFO", "WARNING", "ERROR"] = "INFO"
     model: ModelConfig = Field(default_factory=ModelConfig)
