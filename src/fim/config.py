@@ -42,8 +42,8 @@ class TrainingConfig(BaseSettings):
     model_config = SettingsConfigDict(env_prefix="FIM_TRAIN_")
 
     output_dir: Path = Path("outputs")
-    num_train_epochs: Optional[int] = 1
-    max_steps: Optional[int] = None
+    num_train_epochs: Optional[int] = None
+    max_steps: Optional[int] = 100
     per_device_train_batch_size: int = 1
     gradient_accumulation_steps: int = 4
     learning_rate: float = 1e-5

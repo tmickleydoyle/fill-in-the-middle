@@ -23,7 +23,8 @@ Production-grade Python application for fine-tuning Qwen3-8B on code completion 
 # Install unsloth
 !pip install -q "unsloth[colab-new] @ git+https://github.com/unslothai/unsloth.git"
 
-# Create minimal test configuration
+# Create minimal test configuration (10 steps for quick testing)
+# Remove .env or set FIM_TRAIN_MAX_STEPS=100 for full training
 !echo "FIM_TRAIN_MAX_STEPS=10" > .env
 !echo "FIM_TRAIN_LOGGING_STEPS=1" >> .env
 !echo "FIM_DATA_ENABLE_RESPONSE_MASKING=false" >> .env
@@ -58,15 +59,26 @@ python scripts/infer.py \
 
 Configure via environment variables or `.env` file. See `.env.example` for all options.
 
+**Default:** 100 training steps (configurable via `FIM_TRAIN_MAX_STEPS`)
+
 **Common Settings:**
 ```bash
 FIM_MODEL_NAME=unsloth/Qwen3-8B-bnb-4bit
 FIM_DATA_DATASET_NAME=sourcegraph/context-aware-fim-code-completions
 FIM_DATA_ENABLE_RESPONSE_MASKING=false
-FIM_TRAIN_NUM_TRAIN_EPOCHS=1
-FIM_TRAIN_MAX_STEPS=10  # For minimal testing (overrides num_train_epochs)
+FIM_TRAIN_MAX_STEPS=100  # Default: 100 steps
 FIM_TRAIN_LEARNING_RATE=1e-5
 FIM_LOG_LEVEL=INFO
+```
+
+**Alternative Training Modes:**
+```bash
+# Use epochs instead of steps
+FIM_TRAIN_NUM_TRAIN_EPOCHS=1
+FIM_TRAIN_MAX_STEPS=-1  # Disable max_steps
+
+# Minimal testing (10 steps)
+FIM_TRAIN_MAX_STEPS=10
 ```
 
 ## Project Structure
