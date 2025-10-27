@@ -69,10 +69,27 @@ class Trainer:
     def _create_trainer(self) -> SFTTrainer:
         self.training_config.output_dir.mkdir(parents=True, exist_ok=True)
 
+        # Handle num_train_epochs and max_steps logic
+        if self.training_config.max_steps and self.training_config.max_steps > 0:
+            # Using max_steps: set epochs to 1 (will be overridden by max_steps)
+            num_epochs = 1
+            max_steps = self.training_config.max_steps
+            logger.info(f"Training mode: {max_steps} steps")
+        elif self.training_config.num_train_epochs:
+            # Using epochs: disable max_steps
+            num_epochs = self.training_config.num_train_epochs
+            max_steps = -1
+            logger.info(f"Training mode: {num_epochs} epochs")
+        else:
+            # Default: 1 epoch
+            num_epochs = 1
+            max_steps = -1
+            logger.info("Training mode: 1 epoch (default)")
+
         args = SFTConfig(
             output_dir=str(self.training_config.output_dir),
-            num_train_epochs=self.training_config.num_train_epochs,
-            max_steps=self.training_config.max_steps if self.training_config.max_steps else -1,
+            num_train_epochs=num_epochs,
+            max_steps=max_steps,
             per_device_train_batch_size=self.training_config.per_device_train_batch_size,
             gradient_accumulation_steps=self.training_config.gradient_accumulation_steps,
             learning_rate=self.training_config.learning_rate,
