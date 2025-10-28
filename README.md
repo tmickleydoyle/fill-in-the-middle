@@ -1,20 +1,19 @@
 # Fill-in-the-Middle Fine-Tuning
 
-Production-grade Python application for fine-tuning Qwen3-8B on code completion tasks using fill-in-the-middle training.
+Python application for fine-tuning Qwen3-8B on code completion tasks using fill-in-the-middle training.
 
 ## Quick Start
 
 ### Google Colab (Recommended)
 
-**Enable GPU:** Runtime → Change runtime type → T4 GPU
+**Step 1: Enable GPU**
+- Go to: Runtime → Change runtime type → T4 GPU
 
+**Step 2: Setup (in first cell)**
 ```python
 # Clone repository
 !git clone https://github.com/tmickleydoyle/fill-in-the-middle.git
 %cd fill-in-the-middle
-
-# Verify GPU
-!nvidia-smi
 
 # Install dependencies (skip triton for Colab)
 !pip install -q setuptools wheel torch>=2.8.0 transformers==4.56.2 datasets>=2.14.0 \
@@ -22,38 +21,38 @@ Production-grade Python application for fine-tuning Qwen3-8B on code completion 
 
 # Install unsloth
 !pip install -q "unsloth[colab-new] @ git+https://github.com/unslothai/unsloth.git"
+```
 
-# Create minimal test configuration (10 steps for quick testing)
-# Remove .env or set FIM_TRAIN_MAX_STEPS=100 for full training
+**Step 3: Configure Training (in second cell)**
+```python
+# Option A: Quick test (10 steps, ~2 minutes)
 !echo "FIM_TRAIN_MAX_STEPS=10" > .env
 !echo "FIM_TRAIN_LOGGING_STEPS=1" >> .env
 !echo "FIM_DATA_ENABLE_RESPONSE_MASKING=false" >> .env
 !echo "FIM_LOG_LEVEL=INFO" >> .env
 
-# Run training
+# Option B: Full training (100 steps)
+# Just delete the .env file to use defaults
+# !rm .env
+```
+
+**Step 4: Train Model (in third cell)**
+```python
+# Trains on Sourcegraph FIM dataset
+# Default: 100 steps (or 10 if configured above)
+# Saves to: outputs/final_model
 !python scripts/train.py
+```
 
-# Test fine-tuned model with sample prompts
+**Step 5: Test Fine-Tuned Model (in fourth cell)**
+```python
+# Test with predefined examples (Python & JavaScript)
 !python scripts/test.py
-```
 
-### Local Installation
-
-**Requirements:** NVIDIA/AMD/Intel GPU (Unsloth does not support Apple Silicon)
-
-```bash
-pip install -r requirements.txt
-```
-
-### Training
-```bash
-python scripts/train.py
-```
-
-### Testing
-Test the fine-tuned model with predefined prompts:
-```bash
-python scripts/test.py
+# Or test with your own custom prompt
+!python scripts/infer.py \
+  --prefix "def my_function(x, y):\n    " \
+  --language Python
 ```
 
 ### Custom Inference
@@ -121,8 +120,7 @@ FIM_TRAIN_MAX_STEPS=10
 ## Requirements
 
 - Python 3.10+
-- GPU: NVIDIA/AMD/Intel with 8GB+ VRAM (Colab T4 GPU works)
-- **Note:** Unsloth does not support Apple Silicon (use Colab instead)
+- GPU: Colab T4 GPU works
 - 16GB+ RAM
 
 ## Development
@@ -144,10 +142,6 @@ ruff check src/ tests/
 ruff format src/ tests/
 mypy src/
 ```
-
-## Documentation
-
-See [CLAUDE.md](CLAUDE.md) for detailed architecture documentation and development guidelines.
 
 ## License
 
