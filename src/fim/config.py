@@ -6,7 +6,11 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class ModelConfig(BaseSettings):
-    model_config = SettingsConfigDict(env_prefix="FIM_MODEL_")
+    model_config = SettingsConfigDict(
+        env_prefix="FIM_MODEL_",
+        env_file=".env",
+        env_file_encoding="utf-8",
+    )
 
     name: str = "unsloth/Qwen3-8B-bnb-4bit"
     max_seq_length: int = 1024
@@ -15,7 +19,11 @@ class ModelConfig(BaseSettings):
 
 
 class LoRAConfig(BaseSettings):
-    model_config = SettingsConfigDict(env_prefix="FIM_LORA_")
+    model_config = SettingsConfigDict(
+        env_prefix="FIM_LORA_",
+        env_file=".env",
+        env_file_encoding="utf-8",
+    )
 
     r: int = 8
     lora_alpha: int = 16
@@ -30,7 +38,11 @@ class LoRAConfig(BaseSettings):
 
 
 class DataConfig(BaseSettings):
-    model_config = SettingsConfigDict(env_prefix="FIM_DATA_")
+    model_config = SettingsConfigDict(
+        env_prefix="FIM_DATA_",
+        env_file=".env",
+        env_file_encoding="utf-8",
+    )
 
     dataset_name: str = "sourcegraph/context-aware-fim-code-completions"
     split: str = "train"
@@ -39,7 +51,11 @@ class DataConfig(BaseSettings):
 
 
 class TrainingConfig(BaseSettings):
-    model_config = SettingsConfigDict(env_prefix="FIM_TRAIN_")
+    model_config = SettingsConfigDict(
+        env_prefix="FIM_TRAIN_",
+        env_file=".env",
+        env_file_encoding="utf-8",
+    )
 
     output_dir: Path = Path("outputs")
     num_train_epochs: Optional[int] = None
@@ -60,7 +76,11 @@ class TrainingConfig(BaseSettings):
 
 
 class InferenceConfig(BaseSettings):
-    model_config = SettingsConfigDict(env_prefix="FIM_INFER_")
+    model_config = SettingsConfigDict(
+        env_prefix="FIM_INFER_",
+        env_file=".env",
+        env_file_encoding="utf-8",
+    )
 
     max_new_tokens: int = 128
     temperature: float = 0.7
@@ -69,7 +89,11 @@ class InferenceConfig(BaseSettings):
 
 
 class HuggingFaceConfig(BaseSettings):
-    model_config = SettingsConfigDict(env_prefix="FIM_HF_")
+    model_config = SettingsConfigDict(
+        env_prefix="FIM_HF_",
+        env_file=".env",
+        env_file_encoding="utf-8",
+    )
 
     push_to_hub: bool = False
     repo_name: str = "graft-fim"
