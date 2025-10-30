@@ -10,6 +10,7 @@ class ModelConfig(BaseSettings):
         env_prefix="FIM_MODEL_",
         env_file=".env",
         env_file_encoding="utf-8",
+        extra="ignore",
     )
 
     name: str = "unsloth/Qwen3-8B-bnb-4bit"
@@ -23,6 +24,7 @@ class LoRAConfig(BaseSettings):
         env_prefix="FIM_LORA_",
         env_file=".env",
         env_file_encoding="utf-8",
+        extra="ignore",
     )
 
     r: int = 8
@@ -42,6 +44,7 @@ class DataConfig(BaseSettings):
         env_prefix="FIM_DATA_",
         env_file=".env",
         env_file_encoding="utf-8",
+        extra="ignore",
     )
 
     dataset_name: str = "sourcegraph/context-aware-fim-code-completions"
@@ -55,6 +58,7 @@ class TrainingConfig(BaseSettings):
         env_prefix="FIM_TRAIN_",
         env_file=".env",
         env_file_encoding="utf-8",
+        extra="ignore",
     )
 
     output_dir: Path = Path("outputs")
@@ -80,6 +84,7 @@ class InferenceConfig(BaseSettings):
         env_prefix="FIM_INFER_",
         env_file=".env",
         env_file_encoding="utf-8",
+        extra="ignore",
     )
 
     max_new_tokens: int = 128
@@ -93,6 +98,7 @@ class HuggingFaceConfig(BaseSettings):
         env_prefix="FIM_HF_",
         env_file=".env",
         env_file_encoding="utf-8",
+        extra="ignore",
     )
 
     push_to_hub: bool = False
