@@ -39,6 +39,10 @@ def main() -> None:
 
     save_path = config.training.output_dir / "final_model"
     trainer.save(save_path)
+
+    if config.huggingface.push_to_hub:
+        trainer.push_to_hub(config.huggingface, save_path)
+
     logger.info("Training complete")
 
 

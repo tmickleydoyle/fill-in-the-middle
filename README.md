@@ -34,6 +34,12 @@ Python application for fine-tuning Qwen3-8B on code completion tasks using fill-
 # Option B: Full training (100 steps)
 # Just delete the .env file to use defaults
 # !rm .env
+
+# Optional: Enable Hugging Face upload after training
+# Requires HF_TOKEN to be set in Colab environment
+# !echo "FIM_HF_PUSH_TO_HUB=true" >> .env
+# !echo "FIM_HF_REPO_NAME=graft-fim" >> .env
+# !echo "FIM_HF_USERNAME=tmickleydoyle" >> .env
 ```
 
 **Step 4: Train Model (in third cell)**
@@ -95,6 +101,18 @@ FIM_TRAIN_MAX_STEPS=-1  # Disable max_steps
 
 # Minimal testing (10 steps)
 FIM_TRAIN_MAX_STEPS=10
+```
+
+**Hugging Face Upload:**
+```bash
+# Enable automatic upload to Hugging Face after training
+# Requires HF_TOKEN environment variable to be set
+FIM_HF_PUSH_TO_HUB=true
+FIM_HF_REPO_NAME=graft-fim           # Repository name
+FIM_HF_USERNAME=tmickleydoyle        # Your HF username
+FIM_HF_PRIVATE=false                 # Public repository
+
+# Model will be uploaded to: https://huggingface.co/tmickleydoyle/graft-fim
 ```
 
 ## Project Structure

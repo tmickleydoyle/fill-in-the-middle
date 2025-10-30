@@ -68,6 +68,16 @@ class InferenceConfig(BaseSettings):
     enable_thinking: bool = False
 
 
+class HuggingFaceConfig(BaseSettings):
+    model_config = SettingsConfigDict(env_prefix="FIM_HF_")
+
+    push_to_hub: bool = False
+    repo_name: str = "graft-fim"
+    username: str = "tmickleydoyle"
+    private: bool = False
+    token: Optional[str] = None
+
+
 class Config(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=".env",
@@ -82,3 +92,4 @@ class Config(BaseSettings):
     data: DataConfig = Field(default_factory=DataConfig)
     training: TrainingConfig = Field(default_factory=TrainingConfig)
     inference: InferenceConfig = Field(default_factory=InferenceConfig)
+    huggingface: HuggingFaceConfig = Field(default_factory=HuggingFaceConfig)

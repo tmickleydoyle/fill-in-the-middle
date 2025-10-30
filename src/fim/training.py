@@ -8,7 +8,7 @@ from transformers import PreTrainedModel, PreTrainedTokenizer, TrainingArguments
 from trl import SFTConfig, SFTTrainer
 from unsloth.chat_templates import train_on_responses_only
 
-from .config import DataConfig, TrainingConfig
+from .config import DataConfig, HuggingFaceConfig, TrainingConfig
 
 logger = logging.getLogger("fim")
 
@@ -163,3 +163,35 @@ class Trainer:
         path.mkdir(parents=True, exist_ok=True)
         self.model.save_pretrained(str(path))
         self.tokenizer.save_pretrained(str(path))
+
+    def push_to_hub(self, hf_config: HuggingFaceConfig, local_path: Path) -> None:
+        import os
+
+        repo_id = f"{hf_config.username}/{hf_config.repo_name}"
+        logger.info(f"Pushing model to Hugging Face Hub: {repo_id}")
+
+        token = hf_config.token or os.environ.get("HF_TOKEN")
+        if not token:
+            logger.error("No Hugging Face token found. Set HF_TOKEN environment variable or FIM_HF_TOKEN.")
+            return
+
+        try:
+            logger.info(f"Uploading model (private={hf_config.private})...")
+            self.model.push_to_hub(
+                repo_id=repo_id,
+                token=token,
+                private=hf_config.private,
+            )
+
+            logger.info("Uploading tokenizer...")
+            self.tokenizer.push_to_hub(
+                repo_id=repo_id,
+                token=token,
+                private=hf_config.private,
+            )
+
+            logger.info(f"Successfully pushed to https://huggingface.co/{repo_id}")
+
+        except Exception as e:
+            logger.error(f"Failed to push to Hugging Face Hub: {e}")
+            logger.info("Model is still saved locally at {local_path}")
