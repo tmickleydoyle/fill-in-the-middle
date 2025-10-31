@@ -91,6 +91,8 @@ class InferenceConfig(BaseSettings):
     temperature: float = 0.7
     do_sample: bool = True
     enable_thinking: bool = False
+    format_output: bool = True
+    output_format: Literal["markdown", "plain"] = "markdown"
 
 
 class HuggingFaceConfig(BaseSettings):

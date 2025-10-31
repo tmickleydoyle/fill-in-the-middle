@@ -9,6 +9,23 @@ from .config import InferenceConfig
 logger = logging.getLogger("fim")
 
 
+class MarkdownTextStreamer(TextStreamer):
+    def __init__(self, tokenizer: PreTrainedTokenizer, language: str, skip_prompt: bool = True):
+        super().__init__(tokenizer, skip_prompt=skip_prompt)
+        self.language = language
+        self.started = False
+
+    def on_finalized_text(self, text: str, stream_end: bool = False) -> None:
+        if not self.started:
+            print(f"```{self.language}", flush=True)
+            self.started = True
+
+        super().on_finalized_text(text, stream_end)
+
+        if stream_end:
+            print("\n```", flush=True)
+
+
 class CodeCompleter:
     def __init__(
         self,
@@ -31,7 +48,13 @@ class CodeCompleter:
         messages = self._build_messages(prefix, suffix, language, context)
         inputs = self._prepare_inputs(messages)
 
-        streamer = TextStreamer(self.tokenizer) if stream else None
+        if stream:
+            if self.config.format_output and self.config.output_format == "markdown":
+                streamer = MarkdownTextStreamer(self.tokenizer, language, skip_prompt=True)
+            else:
+                streamer = TextStreamer(self.tokenizer, skip_prompt=True)
+        else:
+            streamer = None
 
         with torch.inference_mode():
             outputs = self.model.generate(
@@ -46,7 +69,24 @@ class CodeCompleter:
             return ""
 
         response_ids = outputs[0][len(inputs["input_ids"][0]):]
-        return self.tokenizer.decode(response_ids, skip_special_tokens=True)
+        decoded_text = self.tokenizer.decode(response_ids, skip_special_tokens=True)
+        return self._format_output(decoded_text, language)
+
+    def _format_output(self, text: str, language: str) -> str:
+        if not self.config.format_output or self.config.output_format == "plain":
+            return text.strip()
+
+        text = text.strip()
+        if not text:
+            return text
+
+        if text.startswith("```") and text.endswith("```"):
+            return text
+
+        if self.config.output_format == "markdown":
+            return f"```{language}\n{text}\n```"
+
+        return text
 
     def _build_messages(
         self,

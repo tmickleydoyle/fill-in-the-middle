@@ -16,6 +16,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--context", nargs="*", help="Additional context snippets")
     parser.add_argument("--stream", action="store_true", help="Stream output")
     parser.add_argument("--model-path", help="Path to model (default: auto-detect outputs/final_model or base model)")
+    parser.add_argument("--no-format", action="store_true", help="Disable markdown formatting")
+    parser.add_argument("--output-format", choices=["markdown", "plain"], default="markdown", help="Output format type")
     return parser.parse_args()
 
 
@@ -38,6 +40,10 @@ def main() -> None:
 
     model_loader = ModelLoader(config.model, config.lora)
     model, tokenizer = model_loader.load()
+
+    if args.no_format:
+        config.inference.format_output = False
+    config.inference.output_format = args.output_format
 
     completer = CodeCompleter(model, tokenizer, config.inference)
 
